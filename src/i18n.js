@@ -65,7 +65,7 @@ const dict = {
     deleteCharacter: "Delete character",
     createSkill: "Skill editor",
     cancel: "Cancel",
-    create: "Create",
+    create: "Save",
     basicTab: "Basic",
     mechanicTab: "Mechanic",
 
@@ -280,7 +280,7 @@ const dict = {
     deleteCharacter: "Borrar personaje",
     createSkill: "Editor de habilidad",
     cancel: "Cancelar",
-    create: "Crear",
+    create: "Guardar",
     basicTab: "Basic",
     mechanicTab: "Mechanic",
 
