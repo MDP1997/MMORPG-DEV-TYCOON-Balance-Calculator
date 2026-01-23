@@ -3,7 +3,7 @@
 
 export const state = {
   // UI language
-  lang: "es",
+  lang: "en",
 
   // Characters
   characters: [],
