@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Character Calculator</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+
+  <!-- Language switch -->
+  <div class="language-switch" aria-label="Language selector">
+    <button id="lang-es" class="lang-btn" type="button" title="Español">ES</button>
+    <button id="lang-en" class="lang-btn" type="button" title="English">EN</button>
+  </div>
+
+  <!-- Modal root -->
+  <div id="modalRoot"></div>
+
+  <div class="app">
+    <div class="sidebar">
+      <button id="btnAddCharacter" class="primary-btn full-width" type="button">
+        ➕ <span data-i18n="addCharacter"></span>
+      </button>
+      <div id="characterList"></div>
+
+      <div class="io-footer">
+        <button id="btnExportAll" class="secondary-btn" type="button" data-i18n="exportAll"></button>
+        <button id="btnImportAll" class="secondary-btn" type="button" data-i18n="importAll"></button>
+        <input id="importFileInput" type="file" accept="application/json" style="display:none;" />
+      </div>
+    </div>
+
+    <div class="content" id="content">
+      <p data-i18n="selectCharacter"></p>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
