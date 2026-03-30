@@ -41,147 +41,147 @@ export const WORLD_ZONES = [
     isCity: true
   },
 
-  // ── Inner ring – levels 1-10 (6 zones) ───────────────────────────────────
+  // ── Inner ring – levels 1-20 (6 zones) ───────────────────────────────────
   {
     id: "z1", nameKey: "zoneVerdantForest", biome: "grass",
-    level: [1, 5], cx: 450, cy: 290,
+    level: [1, 10], cx: 450, cy: 290,
     rx: 80, ry: 65,
     fillColor: "#4a9e3f", borderColor: "#2d6b25",
     decorations: ["tree", "tree", "tree", "rock", "mushroom"]
   },
   {
     id: "z2", nameKey: "zoneSandyShores", biome: "sand",
-    level: [1, 5], cx: 750, cy: 290,
+    level: [1, 10], cx: 750, cy: 290,
     rx: 75, ry: 55,
     fillColor: "#e8d56a", borderColor: "#b8a030",
     decorations: ["rock", "rock", "seaweed", "seaweed", "crystal"]
   },
   {
     id: "z3", nameKey: "zoneRockyHills", biome: "rock",
-    level: [6, 10], cx: 850, cy: 430,
+    level: [11, 20], cx: 850, cy: 430,
     rx: 70, ry: 80,
     fillColor: "#8b7355", borderColor: "#5a4a35",
     decorations: ["rock", "rock", "rock", "rock", "tree"]
   },
   {
     id: "z4", nameKey: "zoneSnowyPines", biome: "snow",
-    level: [6, 10], cx: 750, cy: 610,
+    level: [11, 20], cx: 750, cy: 610,
     rx: 80, ry: 60,
     fillColor: "#cce8f5", borderColor: "#7ab8d8",
     decorations: ["tree", "tree", "rock", "snowflake", "snowflake"]
   },
   {
     id: "z5", nameKey: "zoneMeadows", biome: "grass",
-    level: [1, 8], cx: 450, cy: 610,
+    level: [1, 15], cx: 450, cy: 610,
     rx: 75, ry: 65,
     fillColor: "#6dbf55", borderColor: "#3d8030",
     decorations: ["tree", "mushroom", "mushroom", "rock", "flower"]
   },
   {
     id: "z6", nameKey: "zoneDryPlains", biome: "desert",
-    level: [6, 10], cx: 350, cy: 430,
+    level: [11, 20], cx: 350, cy: 430,
     rx: 70, ry: 75,
     fillColor: "#d4a855", borderColor: "#a07030",
     decorations: ["rock", "cactus", "cactus", "skull", "rock"]
   },
 
-  // ── Middle ring – levels 11-30 (8 zones) ─────────────────────────────────
+  // ── Middle ring – levels 21-60 (8 zones) ─────────────────────────────────
   {
     id: "z7", nameKey: "zoneMushroomGrove", biome: "mushroom",
-    level: [11, 18], cx: 290, cy: 220,
+    level: [21, 36], cx: 290, cy: 220,
     rx: 90, ry: 70,
     fillColor: "#7d3fa0", borderColor: "#4a1a70",
     decorations: ["mushroom", "mushroom", "mushroom", "mushroom", "tree", "tree"]
   },
   {
     id: "z8", nameKey: "zoneDesertWasteland", biome: "desert",
-    level: [11, 18], cx: 600, cy: 175,
+    level: [21, 36], cx: 600, cy: 175,
     rx: 95, ry: 60,
     fillColor: "#d4874a", borderColor: "#9a5520",
     decorations: ["cactus", "skull", "rock", "rock", "bone"]
   },
   {
     id: "z9", nameKey: "zoneSwampMarsh", biome: "swamp",
-    level: [19, 26], cx: 900, cy: 270,
+    level: [37, 52], cx: 900, cy: 270,
     rx: 85, ry: 75,
     fillColor: "#4a7040", borderColor: "#2a4520",
     decorations: ["tree", "mushroom", "seaweed", "crystal", "rock"]
   },
   {
     id: "z10", nameKey: "zoneCrystalCaves", biome: "rock",
-    level: [19, 26], cx: 960, cy: 540,
+    level: [37, 52], cx: 960, cy: 540,
     rx: 80, ry: 90,
     fillColor: "#6070b0", borderColor: "#303888",
     decorations: ["crystal", "crystal", "crystal", "rock", "rock"]
   },
   {
     id: "z11", nameKey: "zonePoisonousGrove", biome: "violet",
-    level: [19, 26], cx: 900, cy: 640,
+    level: [37, 52], cx: 900, cy: 640,
     rx: 85, ry: 65,
     fillColor: "#8a3fa0", borderColor: "#501060",
     decorations: ["mushroom", "flower", "tree", "skull", "seaweed"]
   },
   {
     id: "z12", nameKey: "zoneVolcanicPlains", biome: "volcano",
-    level: [27, 30], cx: 600, cy: 720,
+    level: [53, 60], cx: 600, cy: 720,
     rx: 100, ry: 65,
     fillColor: "#b03010", borderColor: "#701a00",
     decorations: ["rock", "rock", "skull", "bone", "crystal"]
   },
   {
     id: "z13", nameKey: "zoneAncientRuins", biome: "rock",
-    level: [27, 30], cx: 290, cy: 650,
+    level: [53, 60], cx: 290, cy: 650,
     rx: 85, ry: 75,
     fillColor: "#9a8060", borderColor: "#605040",
     decorations: ["building", "building", "rock", "rock", "skull"]
   },
   {
     id: "z14", nameKey: "zoneFrozenTundra", biome: "snow",
-    level: [19, 26], cx: 180, cy: 430,
+    level: [37, 52], cx: 180, cy: 430,
     rx: 80, ry: 80,
     fillColor: "#a8d8f0", borderColor: "#5098c8",
     decorations: ["snowflake", "snowflake", "rock", "tree", "crystal"]
   },
 
-  // ── Outer ring – levels 31-50 (6 zones) ──────────────────────────────────
+  // ── Outer ring – levels 61-100 (6 zones) ──────────────────────────────────
   {
     id: "z15", nameKey: "zoneHauntedForest", biome: "dark",
-    level: [31, 38], cx: 145, cy: 210,
+    level: [61, 75], cx: 145, cy: 210,
     rx: 95, ry: 80,
     fillColor: "#2a3d20", borderColor: "#101808",
     decorations: ["tree", "tree", "tree", "skull", "bone"]
   },
   {
     id: "z16", nameKey: "zoneBurningDesert", biome: "desert",
-    level: [31, 38], cx: 380, cy: 100,
+    level: [61, 75], cx: 380, cy: 100,
     rx: 100, ry: 60,
     fillColor: "#c85010", borderColor: "#802000",
     decorations: ["rock", "cactus", "skull", "bone", "crystal"]
   },
   {
     id: "z17", nameKey: "zoneStormyPeaks", biome: "rock",
-    level: [31, 38], cx: 820, cy: 100,
+    level: [61, 75], cx: 820, cy: 100,
     rx: 95, ry: 70,
     fillColor: "#708090", borderColor: "#404858",
     decorations: ["rock", "rock", "snowflake", "crystal", "rock"]
   },
   {
     id: "z18", nameKey: "zoneLavaFields", biome: "volcano",
-    level: [39, 46], cx: 1050, cy: 400,
+    level: [76, 90], cx: 1050, cy: 400,
     rx: 85, ry: 90,
     fillColor: "#e04010", borderColor: "#902000",
     decorations: ["skull", "bone", "rock", "crystal", "rock"]
   },
   {
     id: "z19", nameKey: "zoneDragonsLair", biome: "dark",
-    level: [39, 50], cx: 1050, cy: 680,
+    level: [76, 100], cx: 1050, cy: 680,
     rx: 90, ry: 80,
     fillColor: "#401020", borderColor: "#200010",
     decorations: ["skull", "bone", "rock", "crystal", "building"]
   },
   {
     id: "z20", nameKey: "zoneCelestialGarden", biome: "violet",
-    level: [47, 50], cx: 145, cy: 660,
+    level: [91, 100], cx: 145, cy: 660,
     rx: 85, ry: 75,
     fillColor: "#6040a0", borderColor: "#301060",
     decorations: ["flower", "crystal", "mushroom", "tree", "tree"]
@@ -191,16 +191,16 @@ export const WORLD_ZONES = [
 // Islands (positioned beyond the main continent)
 const ISLANDS = [
   { cx: 140, cy: 80,   rx: 55, ry: 38, fillColor: "#d4c860", borderColor: "#909020",
-    nameKey: "islandGolden",   level: [15, 22],
+    nameKey: "islandGolden",   level: [28, 45],
     decorations: ["building", "tree", "crystal", "seaweed"] },
   { cx: 1090, cy: 130, rx: 60, ry: 40, fillColor: "#70c8d8", borderColor: "#308898",
-    nameKey: "islandCoral",    level: [35, 42],
+    nameKey: "islandCoral",    level: [65, 82],
     decorations: ["seaweed", "seaweed", "crystal", "building"] },
   { cx: 1090, cy: 820, rx: 55, ry: 42, fillColor: "#b040b0", borderColor: "#601060",
-    nameKey: "islandShadow",   level: [43, 50],
+    nameKey: "islandShadow",   level: [83, 100],
     decorations: ["skull", "crystal", "building", "bone"] },
   { cx: 140, cy: 820,  rx: 58, ry: 38, fillColor: "#3890a0", borderColor: "#185868",
-    nameKey: "islandMystic",   level: [28, 36],
+    nameKey: "islandMystic",   level: [53, 72],
     decorations: ["mushroom", "tree", "crystal", "seaweed"] },
 ];
 
