@@ -466,7 +466,7 @@ function renderBalanceTab(c) {
             data-action="statStep"
             data-stat="${escapeAttr(stat)}"
           />
-          <span class="balance-step-label" id="step-label-${sid}">${clampedStep}/${tierMax} (${tierPct}%)</span>
+          <span class="balance-step-label" id="step-label-${sid}">${tierPct}% <small>[${clampedStep}/${tierMax}]</small></span>
         </div>
 
         <span class="balance-result" id="result-${sid}">${formatStatResult(raw, statType)}</span>

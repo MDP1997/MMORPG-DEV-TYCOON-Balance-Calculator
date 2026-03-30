@@ -1322,7 +1322,7 @@ export function wireGlobalEvents() {
       const stepLabel = document.getElementById(`step-label-${sid}`);
       if (stepLabel) {
         const tierPct = tierPcts ? tierPcts[step] : step * 20;
-        stepLabel.textContent = `${step}/${tierMax} (${tierPct}%)`;
+        stepLabel.innerHTML = `${tierPct}% <small>[${step}/${tierMax}]</small>`;
       }
       updateAllStatResultsOnly();
       debouncedSave();
