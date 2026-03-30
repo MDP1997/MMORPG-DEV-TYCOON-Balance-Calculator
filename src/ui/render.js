@@ -10,6 +10,7 @@ import { EFFECT_TYPES, BUFFABLE_STATS, CONTROL_TYPES, STATUS_TYPES } from "../mo
 import { ensureGameDesign, getRarityMultiplier, effectiveMaxLevel, DEFAULT_RARITIES, DEFAULT_STAT_REFS, STAT_TYPE_ABSOLUTE, STAT_TYPE_PERCENTAGE, DISTRIBUTION_SLOTS } from "../models/gameDesign.js";
 import { WEAPON_SLOTS } from "../models/itemGenerator.js";
 import { ALL_WEAPON_KEYS, WEAPON_KEYS_2H } from "../models/character.js";
+import { renderWorldMapPanel, initWorldMap } from "./worldMap.js";
 
 /* ================= Utilities ================= */
 
@@ -1400,6 +1401,8 @@ export function renderTopBar() {
       data-action="navTab" data-view="itemGenerator" title="${t("navItemGeneratorHint")}">${t("topBarItemGenerator")}</button>
     <button class="nav-tab-btn ${v === "simulation" ? "active" : ""}"
       data-action="navTab" data-view="simulation" title="${t("navSimulationHint")}">${t("topBarSimulation")}</button>
+    <button class="nav-tab-btn ${v === "worldMap" ? "active" : ""}"
+      data-action="navTab" data-view="worldMap" title="${t("navWorldMapHint")}">${t("topBarWorldMap")}</button>
     <div class="nav-spacer"></div>
     <button class="nav-action-btn" data-action="exportAllConfig" title="${t("exportAllHint")}">${t("exportAll")}</button>
     <button class="nav-action-btn" data-action="importAllConfig" title="${t("importAllHint")}">${t("importAll")}</button>
@@ -1430,10 +1433,16 @@ export function renderTopPanel() {
       ? renderGameDesignTab()
       : view === "itemGenerator"
       ? renderItemGeneratorPanel()
+      : view === "worldMap"
+      ? renderWorldMapPanel()
       : renderSimulationPanel();
 
     mainView.innerHTML = bodyHtml;
     applyLanguage(mainView);
+
+    if (view === "worldMap") {
+      initWorldMap();
+    }
   }
 }
 
