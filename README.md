@@ -1,5 +1,10 @@
 # MMORPG DEV TYCOON Balance-Calculator
 
+## ⬇️ Download / Descarga
+
+👉 **[Descargar ZIP (última versión)](../../releases/latest)** — descarga, descomprime y abre `index.html` en tu navegador.  
+👉 **[Download ZIP (latest)](../../releases/latest)** — download, unzip, and open `index.html` in your browser.
+
 ## 🇬🇧 English
 **📖 Description**
 

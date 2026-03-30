@@ -1,0 +1,53 @@
+name: Build & Release ZIP
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create ZIP package
+        run: |
+          zip -r MMORPG-Balance-Calculator.zip \
+            index.html \
+            src/ \
+            README.md
+
+      - name: Upload ZIP as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MMORPG-Balance-Calculator
+          path: MMORPG-Balance-Calculator.zip
+          retention-days: 90
+
+      - name: Delete previous 'latest' release (if exists)
+        run: |
+          gh release delete latest --yes 2>/dev/null || true
+          git push --delete origin latest 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish GitHub Release with ZIP
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Build"
+          body: |
+            ## ⬇️ Descarga / Download
+
+            Descarga el archivo ZIP, descomprímelo y abre `index.html` en tu navegador.  
+            Download the ZIP, unzip it, and open `index.html` in your browser.
+
+            > Actualizado automáticamente en cada commit / Auto-updated on every commit.
+          files: MMORPG-Balance-Calculator.zip
+          prerelease: false
