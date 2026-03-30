@@ -3,13 +3,27 @@
 // Comments in English by request.
 
 import { calculateStat } from "../services/calc.js";
+import { getRarityMultiplier, effectiveMaxLevel } from "../models/gameDesign.js";
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
+// Captured once per simulateBattle call — avoids threading gameDesign through every helper.
+let _gdRef = null;
+
 function scaledStat(character, statName) {
-  const st = character.stats?.[statName];
-  if (!st) return 0;
-  return calculateStat(Number(st.base || 0), Number(st.scaling || 0), character.level);
+  const step       = Number(character.stats?.[statName]?.step ?? 5);
+  const statRef    = _gdRef?.statRefs?.[statName];
+  const refValue   = Number(statRef?.value ?? 0);
+  const maxLvl     = effectiveMaxLevel(statName, _gdRef);
+  const rarityMult = getRarityMultiplier(character.rarity, _gdRef?.rarities);
+  // Pick tier array: NPCs may have different scaling for some stats (e.g. HP)
+  const isNpc    = character.charType === "npc";
+  const tierPcts = (isNpc && statRef?.npcTierPcts) ? statRef.npcTierPcts : (statRef?.tierPcts ?? null);
+  const noLvl    = statRef?.noLevelScaling ?? false;
+  const base     = calculateStat(refValue, Number(character.level ?? 1), maxLvl, step, rarityMult, tierPcts, noLvl);
+  // Flat item bonus (pre-computed before simulation, stored on the character copy)
+  const itemBonus = Number(character.itemStats?.[statName] ?? 0);
+  return base + itemBonus;
 }
 
 function rollChance(pct, rng) {
@@ -40,7 +54,7 @@ function effectLabel(e) {
 }
 
 function buildCombatant(ch) {
-  const maxHp = scaledStat(ch, "HP");
+  const maxHp   = scaledStat(ch, "HP");
   const maxMana = scaledStat(ch, "Mana");
 
   return {
@@ -131,13 +145,15 @@ function activeSummaryText(defender, now) {
   return parts.length ? " | " + parts.join(" | ") : "";
 }
 
-function addRow(ctx, kind, targetSide, text) {
-  ctx.rows.push({
+function addRow(ctx, kind, targetSide, text, extra = null) {
+  const row = {
     t: ctx.now,
-    kind, // "damage" | "crit" | "dot_damage" | "heal" | "buff" | "debuff" | "dispel" | "hp_regen" | "mana_regen" | "info"
+    kind, // "damage"|"crit"|"dot_damage"|"heal"|"buff"|"debuff"|"dispel"|"hp_regen"|"mana_regen"|"hp_cost"|"info"
     a: targetSide === "A" ? text : "",
     b: targetSide === "B" ? text : ""
-  });
+  };
+  if (extra) Object.assign(row, extra);
+  ctx.rows.push(row);
 }
 
 function hitAvoided(defender, impactType, now, rng) {
@@ -177,7 +193,9 @@ function currentSkillTag(ctx) {
  */
 function applyDamage(ctx, attacker, defender, baseDamage, impactType, defenderSide, isDot = false) {
   if (hitAvoided(defender, impactType, ctx.now, ctx.rng)) {
-    addRow(ctx, "info", defenderSide, `avoided (${impactType})`);
+    const evadedAmt = Math.round(Math.max(0, Number(baseDamage || 0)));
+    addRow(ctx, "evaded", defenderSide, `avoided ${impactType}${evadedAmt > 0 ? ` (~${evadedAmt})` : ""}`,
+      { skillName: ctx._currentSkillName || null, amount: evadedAmt });
     return { dealt: 0, avoided: true, crit: false };
   }
 
@@ -186,8 +204,11 @@ function applyDamage(ctx, attacker, defender, baseDamage, impactType, defenderSi
   const defBase = scaledStat(defender._raw, defName);
   const defDelta = defEffective - defBase;
 
-  let dealt = Number(baseDamage || 0) - Number(defEffective || 0);
+  const rawBeforeDef = Number(baseDamage || 0);
+  let dealt = rawBeforeDef - Number(defEffective || 0);
   if (dealt <= 0) dealt = 1;
+  // Damage absorbed by defense (before crit)
+  const mitigated = Math.round(Math.max(0, rawBeforeDef - dealt));
 
   const critChance = clamp(effectiveStat(attacker, "Crit Chance", ctx.now), 0, 100);
   const isCrit = rollChance(critChance, ctx.rng);
@@ -217,7 +238,10 @@ function applyDamage(ctx, attacker, defender, baseDamage, impactType, defenderSi
     ctx,
     kind,
     defenderSide,
-    `${attacker.name}${currentSkillTag(ctx)} hits ${Math.round(applied)} ${impactType}${isCrit ? " CRIT" : ""}${extraText} | HP ${Math.round(before)}→${Math.round(defender.hp)}${activeSummaryText(defender, ctx.now)}`
+    `${attacker.name}${currentSkillTag(ctx)} hits ${Math.round(applied)} ${impactType}${isCrit ? " CRIT" : ""}${extraText} | HP ${Math.round(before)}→${Math.round(defender.hp)}${activeSummaryText(defender, ctx.now)}`,
+    { skillName: ctx._currentSkillName || null, amount: applied, isCrit, mitigated,
+      hpTarget: Math.round(defender.hp), maxHpTarget: Math.round(defender.maxHp),
+      manaTarget: Math.round(defender.mana), maxManaTarget: Math.round(defender.maxMana) }
   );
 
   return { dealt: applied, avoided: false, crit: isCrit };
@@ -230,19 +254,31 @@ function applyVamp(ctx, attacker, dealtDamage, vampLifePct, vampManaPct, attacke
   if (healHp > 0) {
     const before = attacker.hp;
     attacker.hp = Math.min(attacker.maxHp, attacker.hp + healHp);
-    addRow(ctx, "heal", attackerSide, `${attacker.name} vamp HP +${Math.round(attacker.hp - before)} | HP ${Math.round(before)}→${Math.round(attacker.hp)}`);
+    addRow(ctx, "heal", attackerSide, `${attacker.name} vamp HP +${Math.round(attacker.hp - before)} | HP ${Math.round(before)}→${Math.round(attacker.hp)}`,
+      { skillName: ctx._currentSkillName || null, amount: Math.round(attacker.hp - before),
+        hpTarget: Math.round(attacker.hp), maxHpTarget: Math.round(attacker.maxHp),
+        manaTarget: Math.round(attacker.mana), maxManaTarget: Math.round(attacker.maxMana) });
   }
   if (healMana > 0) {
     const before = attacker.mana;
     attacker.mana = Math.min(attacker.maxMana, attacker.mana + healMana);
-    addRow(ctx, "heal", attackerSide, `${attacker.name} vamp Mana +${Math.round(attacker.mana - before)} | Mana ${Math.round(before)}→${Math.round(attacker.mana)}`);
+    addRow(ctx, "heal", attackerSide, `${attacker.name} vamp Mana +${Math.round(attacker.mana - before)} | Mana ${Math.round(before)}→${Math.round(attacker.mana)}`,
+      { skillName: ctx._currentSkillName || null, amount: Math.round(attacker.mana - before),
+        hpTarget: Math.round(attacker.hp), maxHpTarget: Math.round(attacker.maxHp),
+        manaTarget: Math.round(attacker.mana), maxManaTarget: Math.round(attacker.maxMana) });
   }
 }
 
 function applyHeal(ctx, caster, target, amount, targetSide, isDot = false) {
   const before = target.hp;
   target.hp = Math.min(target.maxHp, target.hp + amount);
-  addRow(ctx, "heal", targetSide, `${caster.name}${currentSkillTag(ctx)} heals +${Math.round(target.hp - before)} | HP ${Math.round(before)}→${Math.round(target.hp)}${activeSummaryText(target, ctx.now)}`);
+  const healed = Math.round(target.hp - before);
+  addRow(ctx, "heal", targetSide,
+    `${caster.name}${currentSkillTag(ctx)} heals +${healed} | HP ${Math.round(before)}→${Math.round(target.hp)}${activeSummaryText(target, ctx.now)}`,
+    { skillName: ctx._currentSkillName || null, amount: healed,
+      hpTarget: Math.round(target.hp), maxHpTarget: Math.round(target.maxHp),
+      manaTarget: Math.round(target.mana), maxManaTarget: Math.round(target.maxMana) }
+  );
 }
 
 function applyManaRestore(ctx, caster, target, amount, targetSide, isDot = false) {
@@ -468,7 +504,11 @@ function payCosts(ctx, attacker, skill, attackerSide) {
   if (hpNeed > 0) {
     const before = attacker.hp;
     attacker.hp = Math.max(0, attacker.hp - hpNeed);
-    addRow(ctx, "info", attackerSide, `${attacker.name} pays HP ${Math.round(hpNeed)} | HP ${Math.round(before)}→${Math.round(attacker.hp)}`);
+    const hpPaid = Math.round(before - attacker.hp);
+    addRow(ctx, "hp_cost", attackerSide,
+      `${attacker.name} pays HP ${Math.round(hpNeed)} | HP ${Math.round(before)}→${Math.round(attacker.hp)}`,
+      { skillName: skill.name || null, amount: hpPaid }
+    );
   }
 }
 
@@ -618,7 +658,9 @@ function applyRegenTick(ctx, combatant, side) {
     const before = combatant.hp;
     combatant.hp = Math.min(combatant.maxHp, combatant.hp + hpRegen);
     const gained = Math.round(combatant.hp - before);
-    if (gained > 0) addRow(ctx, "hp_regen", side, `${combatant.name} regen HP +${gained} | HP ${Math.round(before)}→${Math.round(combatant.hp)}`);
+    if (gained > 0) addRow(ctx, "hp_regen", side, `${combatant.name} regen HP +${gained} | HP ${Math.round(before)}→${Math.round(combatant.hp)}`,
+      { amount: gained, hpTarget: Math.round(combatant.hp), maxHpTarget: Math.round(combatant.maxHp),
+        manaTarget: Math.round(combatant.mana), maxManaTarget: Math.round(combatant.maxMana) });
   }
 
   if (manaRegen > 0) {
@@ -700,6 +742,7 @@ function applySkill(ctx, attacker, defender, skill, sides) {
 }
 
 export function simulateBattle(characterA, characterB, options = {}) {
+  _gdRef = options.gameDesign ?? null;
   const maxSeconds = Number(options.maxSeconds || 60);
   const seed = Number(options.seed || 12345);
 
@@ -772,8 +815,8 @@ export function simulateBattle(characterA, characterB, options = {}) {
 
   addRow(ctx, "info", "A", `END HP: ${Math.round(A.hp)}/${Math.round(A.maxHp)} | Mana ${Math.round(A.mana)}/${Math.round(A.maxMana)}`);
   addRow(ctx, "info", "B", `END HP: ${Math.round(B.hp)}/${Math.round(B.maxHp)} | Mana ${Math.round(B.mana)}/${Math.round(B.maxMana)}`);
-  addRow(ctx, "info", "A", `RESULT: ${winner}`);
-  addRow(ctx, "info", "B", `RESULT: ${winner}`);
+  addRow(ctx, "info", "A", `RESULT: ${winner} (${ctx.now}s)`);
+  addRow(ctx, "info", "B", `RESULT: ${winner} (${ctx.now}s)`);
 
-  return { winner, seed, rows: ctx.rows };
+  return { winner, seed, rows: ctx.rows, duration: ctx.now };
 }
