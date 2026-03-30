@@ -5,7 +5,7 @@ import { createDefaultGameDesign } from "./models/gameDesign.js";
 
 export const state = {
   // UI language
-  lang: "es",
+  lang: "en",
 
   // Characters
   characters: [],
