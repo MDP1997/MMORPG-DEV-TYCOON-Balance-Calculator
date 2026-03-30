@@ -425,6 +425,73 @@ const dict = {
     navConfigStatsHint: "Configure game design settings, stats and rarities",
     navItemGeneratorHint: "Generate equipment items for your characters",
     navSimulationHint: "Simulate battles and balance your classes",
+    navWorldMapHint: "View the world map with monster zones and biomes",
+
+    // World Map tab
+    topBarWorldMap: "World Map",
+    worldMapTitle: "World Map",
+    worldMapHint: "Hover a zone to see details • Scroll to zoom • Drag to pan",
+    worldMapReset: "Reset",
+
+    // Zone names
+    zoneCity:             "Central City",
+    zoneVerdantForest:    "Verdant Forest",
+    zoneSandyShores:      "Sandy Shores",
+    zoneRockyHills:       "Rocky Hills",
+    zoneSnowyPines:       "Snowy Pines",
+    zoneMeadows:          "Meadows",
+    zoneDryPlains:        "Dry Plains",
+    zoneMushroomGrove:    "Mushroom Grove",
+    zoneDesertWasteland:  "Desert Wasteland",
+    zoneSwampMarsh:       "Swamp Marsh",
+    zoneCrystalCaves:     "Crystal Caves",
+    zonePoisonousGrove:   "Poisonous Grove",
+    zoneVolcanicPlains:   "Volcanic Plains",
+    zoneAncientRuins:     "Ancient Ruins",
+    zoneFrozenTundra:     "Frozen Tundra",
+    zoneHauntedForest:    "Haunted Forest",
+    zoneBurningDesert:    "Burning Desert",
+    zoneStormyPeaks:      "Stormy Peaks",
+    zoneLavaFields:       "Lava Fields",
+    zoneDragonsLair:      "Dragon's Lair",
+    zoneCelestialGarden:  "Celestial Garden",
+
+    // Island names
+    islandGolden:  "Golden Isle",
+    islandCoral:   "Coral Isle",
+    islandShadow:  "Shadow Isle",
+    islandMystic:  "Mystic Isle",
+
+    // Tooltip labels
+    tooltipBiome: "Biome",
+    tooltipLevel: "Level",
+
+    // Legend
+    legendBiomes:   "Biomes",
+    legendGrass:    "Grass",
+    legendSand:     "Sand",
+    legendRock:     "Rock",
+    legendSnow:     "Snow",
+    legendMushroom: "Mushroom",
+    legendDesert:   "Desert",
+    legendSwamp:    "Swamp",
+    legendVolcano:  "Volcano",
+    legendViolet:   "Violet",
+    legendDark:     "Dark",
+
+    // Biome display names
+    biome_grass:    "Grass",
+    biome_sand:     "Sand",
+    biome_rock:     "Rock",
+    biome_snow:     "Snow",
+    biome_mushroom: "Mushroom",
+    biome_desert:   "Desert",
+    biome_swamp:    "Swamp",
+    biome_volcano:  "Volcano",
+    biome_violet:   "Violet",
+    biome_dark:     "Dark",
+    biome_city:     "City",
+    biome_island:   "Island",
 
     // Export/Import full config
     exportAllHint: "Export all configuration (characters, game design, items) to JSON",
@@ -898,6 +965,73 @@ const dict = {
     navConfigStatsHint: "Configura el diseño del juego, stats y rarezas",
     navItemGeneratorHint: "Genera equipamiento para tus personajes",
     navSimulationHint: "Simula batallas y balancea tus clases",
+    navWorldMapHint: "Ver el mapa del mundo con zonas de monstruos y biomas",
+
+    // World Map tab
+    topBarWorldMap: "Mapa del Mundo",
+    worldMapTitle: "Mapa del Mundo",
+    worldMapHint: "Pasa el ratón sobre una zona para ver detalles • Scroll para zoom • Arrastra para mover",
+    worldMapReset: "Reiniciar",
+
+    // Zone names
+    zoneCity:             "Ciudad Central",
+    zoneVerdantForest:    "Bosque Frondoso",
+    zoneSandyShores:      "Playas Arenosas",
+    zoneRockyHills:       "Colinas Rocosas",
+    zoneSnowyPines:       "Pinos Nevados",
+    zoneMeadows:          "Praderas",
+    zoneDryPlains:        "Llanuras Áridas",
+    zoneMushroomGrove:    "Bosque de Hongos",
+    zoneDesertWasteland:  "Páramo Desértico",
+    zoneSwampMarsh:       "Pantano Cenagoso",
+    zoneCrystalCaves:     "Cuevas de Cristal",
+    zonePoisonousGrove:   "Arboleda Venenosa",
+    zoneVolcanicPlains:   "Llanuras Volcánicas",
+    zoneAncientRuins:     "Ruinas Antiguas",
+    zoneFrozenTundra:     "Tundra Helada",
+    zoneHauntedForest:    "Bosque Embrujado",
+    zoneBurningDesert:    "Desierto Ardiente",
+    zoneStormyPeaks:      "Cumbres Tormentosas",
+    zoneLavaFields:       "Campos de Lava",
+    zoneDragonsLair:      "Guarida del Dragón",
+    zoneCelestialGarden:  "Jardín Celestial",
+
+    // Island names
+    islandGolden:  "Isla Dorada",
+    islandCoral:   "Isla de Coral",
+    islandShadow:  "Isla de Sombra",
+    islandMystic:  "Isla Mística",
+
+    // Tooltip labels
+    tooltipBiome: "Bioma",
+    tooltipLevel: "Nivel",
+
+    // Legend
+    legendBiomes:   "Biomas",
+    legendGrass:    "Hierba",
+    legendSand:     "Arena",
+    legendRock:     "Roca",
+    legendSnow:     "Nieve",
+    legendMushroom: "Hongos",
+    legendDesert:   "Desierto",
+    legendSwamp:    "Pantano",
+    legendVolcano:  "Volcán",
+    legendViolet:   "Violeta",
+    legendDark:     "Oscuro",
+
+    // Biome display names
+    biome_grass:    "Hierba",
+    biome_sand:     "Arena",
+    biome_rock:     "Roca",
+    biome_snow:     "Nieve",
+    biome_mushroom: "Hongos",
+    biome_desert:   "Desierto",
+    biome_swamp:    "Pantano",
+    biome_volcano:  "Volcán",
+    biome_violet:   "Violeta",
+    biome_dark:     "Oscuro",
+    biome_city:     "Ciudad",
+    biome_island:   "Isla",
 
     // Export/Import full config
     exportAllHint: "Exportar toda la configuración (personajes, diseño, items) a JSON",
