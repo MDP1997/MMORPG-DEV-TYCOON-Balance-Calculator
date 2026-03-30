@@ -447,8 +447,10 @@ function renderBalanceTab(c) {
     const isNpc    = c.charType === "npc";
     const tierPcts = (isNpc && statRef?.npcTierPcts) ? statRef.npcTierPcts : (statRef?.tierPcts ?? null);
     const noLvl    = statRef?.noLevelScaling ?? false;
-    const raw      = calculateStat(refValue, c.level, maxLvl, step, rMult, tierPcts, noLvl);
-    const tierPct  = tierPcts ? tierPcts[Math.max(0, Math.min(10, step))] : step * 20;
+    const tierMax  = tierPcts ? tierPcts.length - 1 : 10;
+    const clampedStep = Math.max(0, Math.min(tierMax, step));
+    const raw      = calculateStat(refValue, c.level, maxLvl, clampedStep, rMult, tierPcts, noLvl);
+    const tierPct  = tierPcts ? tierPcts[clampedStep] : clampedStep * 20;
     const sid      = statDomId(stat);
     const noLvlBadge = noLvl ? `<span class="stat-no-level-badge" title="Constant — does not scale with level">const</span>` : "";
 
@@ -459,12 +461,12 @@ function renderBalanceTab(c) {
         <div class="balance-slider-cell">
           <input
             class="balance-slider"
-            type="range" min="0" max="10" step="1"
-            value="${step}"
+            type="range" min="0" max="${tierMax}" step="1"
+            value="${clampedStep}"
             data-action="statStep"
             data-stat="${escapeAttr(stat)}"
           />
-          <span class="balance-step-label" id="step-label-${sid}">${step}/10 (${tierPct}%)</span>
+          <span class="balance-step-label" id="step-label-${sid}">${clampedStep}/${tierMax} (${tierPct}%)</span>
         </div>
 
         <span class="balance-result" id="result-${sid}">${formatStatResult(raw, statType)}</span>
@@ -1371,11 +1373,13 @@ export function updateAllStatResultsOnly() {
     const isNpc    = c.charType === "npc";
     const tierPcts = (isNpc && statRef?.npcTierPcts) ? statRef.npcTierPcts : (statRef?.tierPcts ?? null);
     const noLvl    = statRef?.noLevelScaling ?? false;
+    const tierMax  = tierPcts ? tierPcts.length - 1 : 10;
+    const clamped  = Math.max(0, Math.min(tierMax, step));
     const sid      = statDomId(stat);
 
     const resultEl = document.getElementById(`result-${sid}`);
     if (resultEl) {
-      const raw = calculateStat(refValue, c.level, maxLvl, step, rMult, tierPcts, noLvl);
+      const raw = calculateStat(refValue, c.level, maxLvl, clamped, rMult, tierPcts, noLvl);
       resultEl.textContent = formatStatResult(raw, statType);
     }
   }

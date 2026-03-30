@@ -8,8 +8,8 @@
 export const STAT_TYPE_ABSOLUTE   = "absolute";
 export const STAT_TYPE_PERCENTAGE = "percentage";
 
-// Tier percentage arrays (11 values for steps 0–10).
-// Each value is a percentage of the reference value at that tier.
+// Tier percentage arrays — each entry is % of refValue at that tier step.
+// Array length determines slider max (length - 1). All current arrays have 11 entries (steps 0–10).
 const T_DAMAGE   = [  0,  50,  62,  75,  87, 100, 120, 140, 160, 180, 200];
 const T_DEFENSE  = [ 50,  60,  70,  80,  90, 100, 140, 180, 220, 260, 300];
 const T_HP_P     = [ 50,  60,  70,  80,  90, 100, 110, 120, 130, 140, 150]; // player
@@ -18,6 +18,8 @@ const T_MANA     = [ 50,  60,  70,  80,  90, 100, 120, 140, 160, 180, 200];
 const T_CRIT_CH  = [  0,  20,  40,  60,  80, 100, 120, 140, 160, 180, 200];
 const T_CRIT_DMG = [  5,  20,  40,  60,  80, 100, 160, 220, 280, 340, 400];
 const T_DODGE    = [  0,  20,  40,  60,  80, 100, 140, 180, 220, 260, 300];
+const T_MOVE_P   = [ 80,  84,  88,  92,  96, 100, 104, 108, 112, 116, 120]; // player
+const T_MOVE_N   = [ 34,  47,  60,  73,  86, 100, 104, 108, 112, 116, 120]; // NPC
 
 // Default reference values (at tier 5 / max level) and their type.
 // tierPcts:       percentage array for players.
@@ -25,25 +27,27 @@ const T_DODGE    = [  0,  20,  40,  60,  80, 100, 140, 180, 220, 260, 300];
 // noLevelScaling: if true the value is constant regardless of level.
 // autoCalc:       if true the stat is hidden from the builder sliders.
 export const DEFAULT_STAT_REFS = {
-  "HP":               { value: 50000, type: STAT_TYPE_ABSOLUTE,   tierPcts: T_HP_P,     npcTierPcts: T_HP_N  },
-  "Mana":             { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_MANA                           },
-  "Physical Damage":  { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DAMAGE                         },
-  "Magical Damage":   { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DAMAGE                         },
-  "Physical Defense": { value: 2500,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DEFENSE                        },
-  "Magical Defense":  { value: 2500,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DEFENSE                        },
-  "Crit Chance":      { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_CRIT_CH                        },
-  "Crit Damage":      { value: 100,   type: STAT_TYPE_PERCENTAGE, tierPcts: T_CRIT_DMG, noLevelScaling: true },
-  "Evade":            { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_DODGE                          },
-  "Resist":           { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_DODGE                          },
-  "HP Regen":         { value: 500,   type: STAT_TYPE_ABSOLUTE,   autoCalc: true                             },
-  "Mana Regen":       { value: 200,   type: STAT_TYPE_ABSOLUTE,   autoCalc: true                             }
+  "HP":               { value: 50000, type: STAT_TYPE_ABSOLUTE,   tierPcts: T_HP_P,     npcTierPcts: T_HP_N    },
+  "Mana":             { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_MANA                             },
+  "Physical Damage":  { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DAMAGE                           },
+  "Magical Damage":   { value: 5000,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DAMAGE                           },
+  "Physical Defense": { value: 2500,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DEFENSE                          },
+  "Magical Defense":  { value: 2500,  type: STAT_TYPE_ABSOLUTE,   tierPcts: T_DEFENSE                          },
+  "Crit Chance":      { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_CRIT_CH                          },
+  "Crit Damage":      { value: 100,   type: STAT_TYPE_PERCENTAGE, tierPcts: T_CRIT_DMG, noLevelScaling: true   },
+  "Evade":            { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_DODGE                            },
+  "Resist":           { value: 25,    type: STAT_TYPE_PERCENTAGE, tierPcts: T_DODGE                            },
+  "Movement Speed":   { value: 9,     type: STAT_TYPE_ABSOLUTE,   tierPcts: T_MOVE_P,   npcTierPcts: T_MOVE_N,
+                        noLevelScaling: true                                                                    },
+  "HP Regen":         { value: 500,   type: STAT_TYPE_ABSOLUTE,   autoCalc: true                               },
+  "Mana Regen":       { value: 200,   type: STAT_TYPE_ABSOLUTE,   autoCalc: true                               }
 };
 
 export const DEFAULT_MAX_LEVEL = 50;
 
 // ── Stat distribution table ───────────────────────────────────────────────────
 // For each item slot, what % of each stat comes from that slot.
-// Per-stat columns must sum to 100.
+// Per-stat columns must sum to 100 (autoCalc stats excluded).
 
 export const DISTRIBUTION_SLOTS = [
   "helmet", "chest", "gloves", "pants", "boots",
@@ -51,25 +55,25 @@ export const DISTRIBUTION_SLOTS = [
 ];
 
 // Stat keys in order (must match character.js STAT_KEYS)
-const DS = ["HP","Mana","Physical Damage","Magical Damage","Physical Defense","Magical Defense","Crit Chance","Crit Damage","Evade","Resist","HP Regen","Mana Regen"];
+const DS = ["HP","Mana","Physical Damage","Magical Damage","Physical Defense","Magical Defense","Crit Chance","Crit Damage","Evade","Resist","Movement Speed","HP Regen","Mana Regen"];
 
-function dist(hp,mn,pd,md,pdef,mdef,cc,cd,ev,re,hpr,mnr) {
-  return { "HP":hp,"Mana":mn,"Physical Damage":pd,"Magical Damage":md,"Physical Defense":pdef,"Magical Defense":mdef,"Crit Chance":cc,"Crit Damage":cd,"Evade":ev,"Resist":re,"HP Regen":hpr,"Mana Regen":mnr };
+function dist(hp,mn,pd,md,pdef,mdef,cc,cd,ev,re,ms,hpr,mnr) {
+  return { "HP":hp,"Mana":mn,"Physical Damage":pd,"Magical Damage":md,"Physical Defense":pdef,"Magical Defense":mdef,"Crit Chance":cc,"Crit Damage":cd,"Evade":ev,"Resist":re,"Movement Speed":ms,"HP Regen":hpr,"Mana Regen":mnr };
 }
 
 export const DEFAULT_STAT_DISTRIBUTION = {
-  //          HP  Mn  PDmg MDmg PDef MDef  CC  CD  Ev  Re HPR MnR
-  helmet:   dist(20,  0,   0,   0,  15,  15,   0,  0,  5, 10, 20,  0),
-  chest:    dist(30,  0,   0,   0,  25,  25,   0,  0,  5, 10, 30,  0),
-  gloves:   dist(10,  0,  10,  10,  10,  10,  20, 20, 10,  5, 10, 10),
-  pants:    dist(20,  0,   0,   0,  20,  20,   0,  0, 20, 15, 20,  0),
-  boots:    dist(10,  0,   0,   0,  10,  10,   0,  0, 30, 10, 10,  0),
-  weapon:   dist( 0, 20,  60,  60,   0,   0,  40, 40,  0,  0,  0, 40),
-  ring1:    dist( 5, 20,  15,  15,  10,  10,  20, 20, 15, 25,  5, 25),
-  ring2:    dist( 5, 20,  15,  15,  10,  10,  20, 20, 15, 25,  5, 25),
-  necklace: dist( 0, 40,   0,   0,   0,   0,   0,  0,  0,  0,  0,  0),
+  //          HP  Mn  PDmg MDmg PDef MDef  CC  CD  Ev  Re  MS HPR MnR
+  helmet:   dist(20,  0,   0,   0,  15,  15,   0,  0,  5, 10,  0, 20,  0),
+  chest:    dist(30,  0,   0,   0,  25,  25,   0,  0,  5, 10,  0, 30,  0),
+  gloves:   dist(10,  0,  10,  10,  10,  10,  20, 20, 10,  5,  0, 10, 10),
+  pants:    dist(20,  0,   0,   0,  20,  20,   0,  0, 20, 15,  0, 20,  0),
+  boots:    dist(10,  0,   0,   0,  10,  10,   0,  0, 30, 10,100, 10,  0),
+  weapon:   dist( 0, 20,  60,  60,   0,   0,  40, 40,  0,  0,  0,  0, 40),
+  ring1:    dist( 5, 20,  15,  15,  10,  10,  20, 20, 15, 25,  0,  5, 25),
+  ring2:    dist( 5, 20,  15,  15,  10,  10,  20, 20, 15, 25,  0,  5, 25),
+  necklace: dist( 0, 40,   0,   0,   0,   0,   0,  0,  0,  0,  0,  0,  0),
 };
-// Verify: each stat column sums to 100 (validated at definition).
+// Verify: each non-autoCalc stat column sums to 100.
 
 // Default rarity tiers — each has a key, display label, color, and quality (100 = ×1.0).
 export const DEFAULT_RARITIES = [

@@ -1309,7 +1309,11 @@ export function wireGlobalEvents() {
       const stat = target.dataset.stat;
       if (!stat) return;
 
-      const step = Math.max(0, Math.min(10, Number(target.value)));
+      const statRef  = state.gameDesign?.statRefs?.[stat];
+      const isNpc    = c.charType === "npc";
+      const tierPcts = (isNpc && statRef?.npcTierPcts) ? statRef.npcTierPcts : (statRef?.tierPcts ?? null);
+      const tierMax  = tierPcts ? tierPcts.length - 1 : 10;
+      const step = Math.max(0, Math.min(tierMax, Number(target.value)));
       c.stats[stat] ??= {};
       c.stats[stat].step = step;
 
@@ -1317,11 +1321,8 @@ export function wireGlobalEvents() {
       const sid = stat.toLowerCase().replaceAll(" ", "_").replaceAll("%", "pct");
       const stepLabel = document.getElementById(`step-label-${sid}`);
       if (stepLabel) {
-        const statRef  = state.gameDesign?.statRefs?.[stat];
-        const isNpc    = c.charType === "npc";
-        const tierPcts = (isNpc && statRef?.npcTierPcts) ? statRef.npcTierPcts : (statRef?.tierPcts ?? null);
-        const tierPct  = tierPcts ? tierPcts[step] : step * 20;
-        stepLabel.textContent = `${step}/10 (${tierPct}%)`;
+        const tierPct = tierPcts ? tierPcts[step] : step * 20;
+        stepLabel.textContent = `${step}/${tierMax} (${tierPct}%)`;
       }
       updateAllStatResultsOnly();
       debouncedSave();

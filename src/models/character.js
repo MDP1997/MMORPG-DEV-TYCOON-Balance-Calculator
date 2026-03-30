@@ -12,6 +12,7 @@ export const STAT_KEYS = [
   "Crit Damage",
   "Evade",
   "Resist",
+  "Movement Speed",
   "HP Regen",
   "Mana Regen"
 ];
